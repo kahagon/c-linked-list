@@ -20,16 +20,14 @@ state_storage* init_state_storage() {
     return storage;
 }
 
-void destroy_state_element(state_element* element) {
-    if (!element) return;
-
-    printf("destroying:%s\n", element->state);
-    destroy_state_element(element->next);
-    free(element);
-}
-
 void destroy_state_storage(state_storage* storage) {
-    destroy_state_element(storage->first);
+    state_element* current_element = storage->first;
+    while (current_element) {
+        printf("current:%s\n", current_element->state);
+        state_element* next = current_element->next;
+        free(current_element);
+        current_element = next;
+    }
     free(storage);
 }
 
@@ -59,15 +57,10 @@ void store_state_to_first(state_storage* storage, char* state) {
 
 int main (int argc, char* argv[]) {
     state_storage* storage = init_state_storage();
-    state_element* current_element;
 
-    store_state(storage, "1");
-    store_state(storage, "2");
-    store_state(storage, "3");
-
-    for (current_element = storage->first; current_element; current_element = current_element->next) {
-        printf("current:%s\n", current_element->state);
-    }
+    store_state_to_first(storage, "3");
+    store_state_to_first(storage, "2");
+    store_state_to_first(storage, "1");
 
     destroy_state_storage(storage);
     return 0;
